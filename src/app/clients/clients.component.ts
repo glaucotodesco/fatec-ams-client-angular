@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ClientService } from '../client.service';
 import { Client } from '../client';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-clients',
@@ -11,89 +11,90 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class ClientsComponent implements OnInit {
 
   clients: Client[] = [];
-  isEditing : boolean = false;
-  formGroupClient : FormGroup;
+  isEditing: boolean = false;
+  formGroupClient: FormGroup;
+  submitted: boolean = false;
 
-  constructor (private clientService: ClientService, 
-               private formBuilder: FormBuilder
-    ){
-      this.formGroupClient = formBuilder.group({
-        	id : [''],
-          name : [''],
-          email: ['']
-      });
-    }
-
-
-
-
+  constructor(private clientService: ClientService,
+    private formBuilder: FormBuilder
+  ) {
+    this.formGroupClient = formBuilder.group({
+      id: [''],
+      name: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
 
   ngOnInit(): void {
-     this.loadClients();
+    this.loadClients();
   }
 
   loadClients() {
-      this.clientService.getClients().subscribe(
-        {
-          next : data => this.clients = data
-        }
-      );
-  
+    this.clientService.getClients().subscribe(
+      {
+        next: data => this.clients = data
+      }
+    );
+
   }
 
   save() {
-    if(this.isEditing)
-    {
+    this.submitted = true;
+
+    if (this.formGroupClient.valid) {
+      if (this.isEditing) {
         this.clientService.update(this.formGroupClient.value).subscribe(
           {
-             next: () => { 
-                  this.loadClients();
-                  this.formGroupClient.reset();
-                  this.isEditing = false;
-             }
+            next: () => {
+              this.loadClients();
+              this.formGroupClient.reset();
+              this.isEditing = false;
+              this.submitted = false;
+            }
           }
         )
-    } 
-    else{
-      this.clientService.save(this.formGroupClient.value).subscribe(
-        {
-          next: data => {
-            this.clients.push(data);
-            this.formGroupClient.reset();
+      }
+      else {
+        this.clientService.save(this.formGroupClient.value).subscribe(
+          {
+            next: data => {
+              this.clients.push(data);
+              this.formGroupClient.reset();
+              this.submitted = false;
+            }
           }
-        }
-       );
+        );
+      }
     }
-    
+
+
+
   }
 
-  clean(){
+  clean() {
     this.formGroupClient.reset();
-    this.isEditing  = false;
+    this.isEditing = false;
+    this.submitted = false;
   }
 
-  edit(client: Client){
+  edit(client: Client) {
     this.formGroupClient.setValue(client);
     this.isEditing = true;
   }
 
-  delete(client: Client){
+  delete(client: Client) {
     this.clientService.delete(client).subscribe({
       next: () => this.loadClients()
     })
   }
 
+  get name() : any {
+    return this.formGroupClient.get("name");
+  }
 
-
-
-
-
-
-
-
-
-
-
+  get email() : any {
+    return this.formGroupClient.get("email");
+  }
 
 
 }
