@@ -11,18 +11,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class ClientsComponent implements OnInit {
 
   clients: Client[] = [];
-  isEditing: boolean = false;
-  formGroupClient: FormGroup;
-  submitted: boolean = false;
+  client: Client = {} as Client;
 
-  constructor(private clientService: ClientService,
-    private formBuilder: FormBuilder
-  ) {
-    this.formGroupClient = formBuilder.group({
-      id: [''],
-      name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]]
-    });
+  isEditing: boolean = false;
+ 
+  constructor(private clientService: ClientService) {
   }
 
   ngOnInit(): void {
@@ -38,47 +31,30 @@ export class ClientsComponent implements OnInit {
 
   }
 
-  save() {
-    this.submitted = true;
-
-    if (this.formGroupClient.valid) {
-      if (this.isEditing) {
-        this.clientService.update(this.formGroupClient.value).subscribe(
-          {
+  onSaveEvent(client: Client) {
+     if (this.isEditing) {
+        this.clientService.update(client).subscribe({
             next: () => {
               this.loadClients();
-              this.formGroupClient.reset();
               this.isEditing = false;
-              this.submitted = false;
             }
           }
         )
       }
       else {
-        this.clientService.save(this.formGroupClient.value).subscribe(
+        this.clientService.save(client).subscribe(
           {
             next: data => {
               this.clients.push(data);
-              this.formGroupClient.reset();
-              this.submitted = false;
             }
           }
         );
       }
-    }
-
-
-
   }
 
-  clean() {
-    this.formGroupClient.reset();
-    this.isEditing = false;
-    this.submitted = false;
-  }
 
   edit(client: Client) {
-    this.formGroupClient.setValue(client);
+    this.client = client;
     this.isEditing = true;
   }
 
@@ -86,14 +62,6 @@ export class ClientsComponent implements OnInit {
     this.clientService.delete(client).subscribe({
       next: () => this.loadClients()
     })
-  }
-
-  get name() : any {
-    return this.formGroupClient.get("name");
-  }
-
-  get email() : any {
-    return this.formGroupClient.get("email");
   }
 
 
