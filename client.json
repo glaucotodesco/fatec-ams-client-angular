@@ -4,6 +4,11 @@
       "id": 7,
       "name": "Ana",
       "email": "ana@gmail.com"
+    },
+    {
+      "id": 8,
+      "name": "Glauco",
+      "email": "glauco.todesco@gmail.com"
     }
   ]
 }

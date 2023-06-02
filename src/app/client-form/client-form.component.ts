@@ -15,6 +15,10 @@ export class ClientFormComponent implements OnChanges{
   @Output()
   saveEvent = new EventEmitter<Client>();
 
+  @Output()
+  cleanEvent = new EventEmitter<void>();
+
+
   formGroupClient: FormGroup;
   submitted: boolean = false;
   
@@ -40,6 +44,7 @@ export class ClientFormComponent implements OnChanges{
   }
 
   clean() {
+    this.cleanEvent.emit();
     this.formGroupClient.reset();
     this.submitted = false;
   }
