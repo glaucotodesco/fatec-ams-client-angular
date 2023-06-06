@@ -15,7 +15,7 @@ import { AppRoutingModule } from './app-routing.module';
   declarations: [
     AppComponent,
     ClientsComponent,
-    ClientFormComponent
+    ClientFormComponent,
   ],
   imports: [
     BrowserModule,
