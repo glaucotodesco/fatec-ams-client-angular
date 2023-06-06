@@ -9,16 +9,8 @@ import { Client } from '../client';
 })
 export class ClientFormComponent implements OnChanges{
 
-  @Input()
+ 
   client: Client = {} as Client;
-
-  @Output()
-  saveEvent = new EventEmitter<Client>();
-
-  @Output()
-  cleanEvent = new EventEmitter<void>();
-
-
   formGroupClient: FormGroup;
   submitted: boolean = false;
   
@@ -37,14 +29,12 @@ export class ClientFormComponent implements OnChanges{
   save(){
       this.submitted = true;
       if(this.formGroupClient.valid){
-        this.saveEvent.emit(this.formGroupClient.value);
         this.formGroupClient.reset();
         this.submitted = false;
       }
   }
 
   clean() {
-    this.cleanEvent.emit();
     this.formGroupClient.reset();
     this.submitted = false;
   }
